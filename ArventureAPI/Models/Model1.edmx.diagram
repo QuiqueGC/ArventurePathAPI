@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="1c5eed126dd54b71a9be7493e6fd8ff7" Name="Diagram1">
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.achievement" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.arventure" Width="1.5" PointX="3" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.fragment" Width="1.5" PointX="3" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.happening" Width="1.5" PointX="5.25" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.route" Width="1.5" PointX="0.75" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.stop" Width="1.5" PointX="3" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.story" Width="1.5" PointX="0.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="abp__politecnics_com_dam01Model.user" Width="1.5" PointX="8.25" PointY="4.25" IsExpanded="true" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_arventure_achievement" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_arventure_route" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_arventure_story" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_fragment_story" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_happening_story" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.FK_stop_route" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.arventure_have_happening" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.user_have_achievement" ManuallyRouted="false" />
+        <AssociationConnector Association="abp__politecnics_com_dam01Model.user_play_arventure" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
