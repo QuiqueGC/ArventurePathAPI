@@ -15,56 +15,43 @@ using ArventureAPI.Models;
 
 namespace ArventureAPI.Controllers
 {
-    public class arventuresController : ApiController
+    public class achievementsController : ApiController
     {
         private abp__politecnics_com_dam01Entities db = new abp__politecnics_com_dam01Entities();
 
-        // GET: api/arventures
-        public IQueryable<arventure> Getarventure()
+        // GET: api/achievements
+        public IQueryable<achievement> Getachievement()
         {
-            //Evita que cargue los datos relacionados (y así cargar sólo las areventures per se)
             db.Configuration.LazyLoadingEnabled = false;
-            return db.arventure
-                .Include("route")
-                .Include("story");
+            return db.achievement;
         }
 
-        // GET: api/arventures/5
-        [ResponseType(typeof(arventure))]
-        public async Task<IHttpActionResult> Getarventure(int id)
+        // GET: api/achievements/5
+        [ResponseType(typeof(achievement))]
+        public async Task<IHttpActionResult> Getachievement(int id)
         {
+
             IHttpActionResult result;
-            //Evita que cargue los datos relacionados (y así cargar sólo las arventures per se)
             db.Configuration.LazyLoadingEnabled = false;
 
-            //cicles cicles = await db.cicles.FindAsync(id);
+            achievement _achievement = await db.achievement.FindAsync(id);
 
-            //Queremos que nos devuelva ciclos con curso
-            arventure _arventure = await db.arventure
-                .Include("achievement")
-                .Include("route")
-                .Include("route.stop")
-                .Include("story")
-                .Include("story.fragment")
-                .Include("happening")
-                .Where(c => c.id == id)
-                .FirstOrDefaultAsync();
 
-            if (_arventure == null)
+            if (_achievement == null)
             {
                 result = NotFound();
             }
             else
             {
-                result = Ok(_arventure);
+                result = Ok(_achievement);
             }
 
             return result;
         }
 
-        // PUT: api/arventures/5
+        // PUT: api/achievements/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> Putarventure(int id, arventure _arventure)
+        public async Task<IHttpActionResult> Putachievement(int id, achievement _achievement)
         {
             IHttpActionResult result;
             String msg = "";
@@ -75,13 +62,13 @@ namespace ArventureAPI.Controllers
             }
             else
             {
-                if (id != _arventure.id)
+                if (id != _achievement.id)
                 {
                     result = BadRequest();
                 }
                 else
                 {
-                    db.Entry(_arventure).State = EntityState.Modified;
+                    db.Entry(_achievement).State = EntityState.Modified;
 
                     try
                     {
@@ -90,7 +77,7 @@ namespace ArventureAPI.Controllers
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!arventureExists(id))
+                        if (!achievementExists(id))
                         {
                             result = NotFound();
                         }
@@ -111,12 +98,10 @@ namespace ArventureAPI.Controllers
             return result;
         }
 
-
-        // POST: api/arventures
-        [ResponseType(typeof(arventure))]
-        public async Task<IHttpActionResult> Postarventure(arventure _arventure)
+        // POST: api/achievements
+        [ResponseType(typeof(achievement))]
+        public async Task<IHttpActionResult> Postachievement(achievement _achievement)
         {
-
             IHttpActionResult result;
             if (!ModelState.IsValid)
             {
@@ -124,12 +109,12 @@ namespace ArventureAPI.Controllers
             }
             else
             {
-                db.arventure.Add(_arventure);
+                db.achievement.Add(_achievement);
                 String msg = "";
                 try
                 {
                     await db.SaveChangesAsync();
-                    result = CreatedAtRoute("DefaultApi", new { id = _arventure.id }, _arventure);
+                    result = CreatedAtRoute("DefaultApi", new { id = _achievement.id }, _achievement);
 
                 }
                 catch (DbUpdateException ex)
@@ -142,14 +127,14 @@ namespace ArventureAPI.Controllers
             return result;
         }
 
-        // DELETE: api/arventures/5
-        [ResponseType(typeof(arventure))]
-        public async Task<IHttpActionResult> Deletearventure(int id)
+        // DELETE: api/achievements/5
+        [ResponseType(typeof(achievement))]
+        public async Task<IHttpActionResult> Deleteachievement(int id)
         {
             IHttpActionResult result;
 
-            arventure _arventure = await db.arventure.FindAsync(id);
-            if (_arventure == null)
+            achievement _achievement = await db.achievement.FindAsync(id);
+            if (_achievement == null)
             {
                 result = NotFound();
 
@@ -159,9 +144,9 @@ namespace ArventureAPI.Controllers
                 String msg = "";
                 try
                 {
-                    db.arventure.Remove(_arventure);
+                    db.achievement.Remove(_achievement);
                     await db.SaveChangesAsync();
-                    result = Ok(_arventure);
+                    result = Ok(_achievement);
 
                 }
                 catch (DbUpdateException ex)
@@ -183,9 +168,9 @@ namespace ArventureAPI.Controllers
             base.Dispose(disposing);
         }
 
-        private bool arventureExists(int id)
+        private bool achievementExists(int id)
         {
-            return db.arventure.Count(e => e.id == id) > 0;
+            return db.achievement.Count(e => e.id == id) > 0;
         }
     }
 }

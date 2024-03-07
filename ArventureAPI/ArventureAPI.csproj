@@ -164,6 +164,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Classes\MyUtils.cs" />
+    <Compile Include="Controllers\achievementsController.cs" />
     <Compile Include="Controllers\arventuresController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\usersController.cs" />
