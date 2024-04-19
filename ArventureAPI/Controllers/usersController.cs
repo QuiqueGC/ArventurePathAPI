@@ -34,7 +34,12 @@ namespace ArventureAPI.Controllers
             //Evita que cargue los datos relacionados (y así cargar sólo las arventures per se)
             db.Configuration.LazyLoadingEnabled = false;
 
-            user _user = await db.user.FindAsync(id);
+            user _user = await db.user
+                .Include("achievement")
+                .Where(c => c.id == id)
+                .FirstOrDefaultAsync();
+
+            //user _user = await db.user.FindAsync(id);
 
             if (_user == null)
             {
@@ -47,6 +52,111 @@ namespace ArventureAPI.Controllers
 
             return result;
         }
+
+
+        /// <summary>
+        /// Actualiza el usuario
+        /// </summary>
+        /// <param name="id">int con el id del usuario</param>
+        /// <param name="_user">el objeto usuario</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/users/update/{id}")]
+        public async Task<IHttpActionResult> UpdateUser (int id, user _user)
+        {
+
+            IHttpActionResult result;
+            String msg = "";
+
+            if (!ModelState.IsValid)
+            {
+                result = BadRequest(ModelState);
+            }
+            else
+            {
+                if (id != _user.id)
+                {
+                    result = BadRequest();
+                }
+                else
+                {
+
+                    var userEntity = db.user.Include(u => u.achievement).FirstOrDefault(u => u.id == id);
+                    if (userEntity != null) 
+                    {
+                        // Agregar nuevos logros a la lista de logros del usuario
+                        foreach (var newAchievement in _user.achievement)
+                        {
+                            // Verifica si el logro ya existe en la lista del usuario
+                            if (!userEntity.achievement.Any(a => a.id == newAchievement.id))
+                            {
+                                // Si no existe, agrégalo a la lista
+                                userEntity.achievement.Add(newAchievement);
+                            }
+                        }
+                    }
+
+                    //db.Entry(_user).State = EntityState.Modified;
+
+                    try
+                    {
+                        await db.SaveChangesAsync();
+                        result = StatusCode(HttpStatusCode.NoContent);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!userExists(id))
+                        {
+                            result = NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        SqlException sqlException = (SqlException)ex.InnerException.InnerException;
+                        msg = MyUtils.ErrorMessage(sqlException);
+                        result = BadRequest(msg);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
+        // POST: api/users
+        [ResponseType(typeof(user))]
+        public async Task<IHttpActionResult> Postuser(user _user)
+        {
+            IHttpActionResult result;
+            if (!ModelState.IsValid)
+            {
+                result = BadRequest(ModelState);
+            }
+            else
+            {
+                db.user.Add(_user);
+                String msg = "";
+                try
+                {
+                    await db.SaveChangesAsync();
+                    result = CreatedAtRoute("DefaultApi", new { id = _user.id }, _user);
+
+                }
+                catch (DbUpdateException ex)
+                {
+                    SqlException sqlException = (SqlException)ex.InnerException.InnerException;
+                    msg = MyUtils.ErrorMessage(sqlException);
+                    result = BadRequest(msg);
+                }
+            }
+            return result;
+        }
+
+
 
         // PUT: api/users/5
         [ResponseType(typeof(void))]
@@ -94,92 +204,6 @@ namespace ArventureAPI.Controllers
                 }
             }
 
-            return result;
-        }
-
-        /// <summary>
-        /// Actualiza el usuario
-        /// </summary>
-        /// <param name="id">int con el id del usuario</param>
-        /// <param name="_user">el objeto usuario</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("api/users/update/{id}")]
-        public async Task<IHttpActionResult> UpdateUser (int id, user _user)
-        {
-            IHttpActionResult result;
-            String msg = "";
-
-            if (!ModelState.IsValid)
-            {
-                result = BadRequest(ModelState);
-            }
-            else
-            {
-                if (id != _user.id)
-                {
-                    result = BadRequest();
-                }
-                else
-                {
-                    db.Entry(_user).State = EntityState.Modified;
-
-                    try
-                    {
-                        await db.SaveChangesAsync();
-                        result = StatusCode(HttpStatusCode.NoContent);
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!userExists(id))
-                        {
-                            result = NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        SqlException sqlException = (SqlException)ex.InnerException.InnerException;
-                        msg = MyUtils.ErrorMessage(sqlException);
-                        result = BadRequest(msg);
-                    }
-                }
-            }
-
-            return result;
-        }
-
-
-
-        // POST: api/users
-        [ResponseType(typeof(user))]
-        public async Task<IHttpActionResult> Postuser(user _user)
-        {
-            IHttpActionResult result;
-            if (!ModelState.IsValid)
-            {
-                result = BadRequest(ModelState);
-            }
-            else
-            {
-                db.user.Add(_user);
-                String msg = "";
-                try
-                {
-                    await db.SaveChangesAsync();
-                    result = CreatedAtRoute("DefaultApi", new { id = _user.id }, _user);
-
-                }
-                catch (DbUpdateException ex)
-                {
-                    SqlException sqlException = (SqlException)ex.InnerException.InnerException;
-                    msg = MyUtils.ErrorMessage(sqlException);
-                    result = BadRequest(msg);
-                }
-            }
             return result;
         }
 
