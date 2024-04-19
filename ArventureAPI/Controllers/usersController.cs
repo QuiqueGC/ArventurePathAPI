@@ -97,6 +97,63 @@ namespace ArventureAPI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Actualiza el usuario
+        /// </summary>
+        /// <param name="id">int con el id del usuario</param>
+        /// <param name="_user">el objeto usuario</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/users/update/{id}")]
+        public async Task<IHttpActionResult> UpdateUser (int id, user _user)
+        {
+            IHttpActionResult result;
+            String msg = "";
+
+            if (!ModelState.IsValid)
+            {
+                result = BadRequest(ModelState);
+            }
+            else
+            {
+                if (id != _user.id)
+                {
+                    result = BadRequest();
+                }
+                else
+                {
+                    db.Entry(_user).State = EntityState.Modified;
+
+                    try
+                    {
+                        await db.SaveChangesAsync();
+                        result = StatusCode(HttpStatusCode.NoContent);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!userExists(id))
+                        {
+                            result = NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        SqlException sqlException = (SqlException)ex.InnerException.InnerException;
+                        msg = MyUtils.ErrorMessage(sqlException);
+                        result = BadRequest(msg);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
+
         // POST: api/users
         [ResponseType(typeof(user))]
         public async Task<IHttpActionResult> Postuser(user _user)
